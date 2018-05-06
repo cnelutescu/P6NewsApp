@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">P6-Books News</string>
+    <string name="no_books">No books reviews found.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+
+
+
+    <string name="book_news_image">Book news image</string>
+
+</resources>

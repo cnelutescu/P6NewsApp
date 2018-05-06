@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#03A9F4</color>
+
+    <!-- Primary dark color of the app (shown in the status bar) -->
+
+    <!-- Primary color of the app (shown in the app bar) -->
+
+    <!-- Background color for app -->
+    <color name="background_app">#03A9F4</color>
+
+
+
+    <!-- Text color for the details of the book news in the list item -->
+    <color name="textColorBookNewsDetails">#B4BAC0</color>
+
+    <!-- Text color for the Title in the list item -->
+    <color name="textColorBookNewsTitle">#2B3D4D</color>
+
+
+
+</resources>
