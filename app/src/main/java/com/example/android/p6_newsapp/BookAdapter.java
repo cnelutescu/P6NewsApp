@@ -71,8 +71,10 @@ public class BookAdapter extends ArrayAdapter<Book> {
         // The use of external libraries for the core functionality will not be permitted but
         // this in an extra feature not a core functionality  :)
         String imageUrl = currentBook.getThumbnailUrl();
-        // Picasso allows for hassle-free image loading in your application — in one line of code!
-        Picasso.get().load(imageUrl).into((ImageView) listItemView.findViewById(R.id.image));
+        if (imageUrl != "") {
+            // Picasso allows for hassle-free image loading in your application — in one line of code!
+            Picasso.get().load(imageUrl).into((ImageView) listItemView.findViewById(R.id.image));
+        }
 
         // Return the list item view that is now showing the appropriate data
         return listItemView;

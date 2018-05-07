@@ -3,8 +3,32 @@
     <string name="no_books">No books reviews found.</string>
     <string name="no_internet_connection">No internet connection.</string>
 
-
-
     <string name="book_news_image">Book news image</string>
+
+
+
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">News Feed Settings</string>
+
+
+    <!-- Strings For page_size Preference [CHAR LIMIT=30] -->
+    <string name="settings_page_size_label">Number of articles to display</string>
+    <string name="settings_min_page_size_key" translatable="false">page_size</string>
+    <string name="settings_min_page_size_default" translatable="false">20</string>
+
+
+
+    <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
+    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_newest_value</string>
+    <!-- Label for order-by oldest first [CHAR LIMIT=20] -->
+    <string name="settings_order_by_oldest_label">Oldest First</string>
+    <string name="settings_order_by_oldest_value" translatable="false">oldest</string>
+    <!-- Label for order-by newest first [CHAR LIMIT=20] -->
+    <string name="settings_order_by_newest_label">Newest First</string>
+    <string name="settings_order_by_newest_value" translatable="false">newest</string>
+
+
 
 </resources>

@@ -4,11 +4,15 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -36,8 +40,15 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
      * URL for Book data from the Guardian dataset
      */
     private static final String THEGUARDIAN_REQUEST_URL =
-            "http://content.guardianapis.com/search?section=books&order-by=newest&show-tags=contributor&show-fields=all&page-size=30&api-key=5b253f61-670e-44c9-9cab-8fe015dbbfc0";
-
+            "http://content.guardianapis.com/search?";   // +
+/*
+                    "section=books" +
+                    "&order-by=newest" +
+                    "&show-tags=contributor" +
+                    "&show-fields=all" +
+                    "&page-size=30" +
+                    "&api-key=5b253f61-670e-44c9-9cab-8fe015dbbfc0";
+*/
     /**
      * Adapter for the list of books
      */
@@ -122,9 +133,41 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
      * @return BookLoader
      */
     @Override
+    // onCreateLoader instantiates and returns a new Loader for the given ID
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
+
+        // Read preferences from storage
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences.
+        // The second parameter is the default value for this preference.
+        String minPageSize = sharedPrefs.getString(
+                getString(R.string.settings_min_page_size_key),
+                getString(R.string.settings_min_page_size_default));
+
+        String orderBy  = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(THEGUARDIAN_REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value. For example, the `format=geojson`
+        uriBuilder.appendQueryParameter("section", "books");
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+//        uriBuilder.appendQueryParameter("order-by", "newest");
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("show-fields", "all");
+        uriBuilder.appendQueryParameter("page-size", minPageSize);
+        uriBuilder.appendQueryParameter("api-key", "5b253f61-670e-44c9-9cab-8fe015dbbfc0");
+
+        // Return the completed uri
         // Create a new loader for the given URL
-        return new BookLoader(this, THEGUARDIAN_REQUEST_URL);
+        return new BookLoader(this, uriBuilder.toString());
     }
 
     /**
@@ -167,5 +210,32 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }
+
+
+
+    @Override
+    // This method initialize the contents of the Activity's options menu.
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the Options Menu we specified in XML
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    // This method is called whenever an item in the options menu is selected.
+    // This method passes the MenuItem that is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();  // determine which item ID was selected and what action to take
+        if (id == R.id.action_settings) {   // our menu only has one item: action_settings
+            // open the SettingsActivity via an intent
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
 }
