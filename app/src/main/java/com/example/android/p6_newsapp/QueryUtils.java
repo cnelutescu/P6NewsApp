@@ -30,14 +30,16 @@ public final class QueryUtils {
     private static final String WEB_PUBLICATION_DATE = "webPublicationDate";
     private static final String WEB_TITLE = "webTitle";
     private static final String WEB_URL = "webUrl";
-    private static final String FIELDS= "fields";
+    private static final String FIELDS = "fields";
     private static final String THUMBNAIL = "thumbnail";
     private static final String TAGS = "tags";
 
     // Tag for data item not available
     private static final String NOT_AVAILABLE = "N/A";
 
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
@@ -61,7 +63,7 @@ public final class QueryUtils {
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.error_http_request), e);
         }
 
         // Extract relevant fields from the JSON response and create a list of {@link Book}s
@@ -77,7 +79,7 @@ public final class QueryUtils {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Problem building the URL ", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.error_building_url), e);
         }
         return url;
     }
@@ -108,10 +110,10 @@ public final class QueryUtils {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                Log.e(LOG_TAG, String.valueOf(R.string.error_response_code) + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the book JSON results.", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.error_retrieving_json_results), e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -145,6 +147,7 @@ public final class QueryUtils {
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
             // Extract the JSONObject associated with the key called "response",
             JSONObject responseJSONObject = baseJsonResponse.getJSONObject(RESPONSE);
+
             // Extract the JSONArray associated with the key called "results"
             JSONArray bookArray = responseJSONObject.getJSONArray(RESULTS);
             // For each book in the bookArray, create an {@link Book} object
@@ -153,17 +156,29 @@ public final class QueryUtils {
                 // Get a single book at position i within the list of books
                 JSONObject currentBook = bookArray.getJSONObject(i);
 
-                // Extract the value for the key called "sectionName"
-                String sectionName = currentBook.optString(SECTION_NAME);
+                String sectionName = NOT_AVAILABLE;
+                if (currentBook.has(WEB_PUBLICATION_DATE)) {
+                    // Extract the value for the key called "sectionName"
+                    sectionName = currentBook.optString(SECTION_NAME);
+                }
 
-                // Extract the value for the key called "webPublicationDate"
-                String date = currentBook.optString(WEB_PUBLICATION_DATE);
+                String date = NOT_AVAILABLE;
+                if (currentBook.has(WEB_PUBLICATION_DATE)) {
+                    // Extract the value for the key called "webPublicationDate"
+                    date = currentBook.optString(WEB_PUBLICATION_DATE);
+                }
 
-                // Extract the value for the key called "webTitle"
-                String title = currentBook.optString(WEB_TITLE);
+                String title = NOT_AVAILABLE;
+                if (currentBook.has(WEB_PUBLICATION_DATE)) {
+                    // Extract the value for the key called "webTitle"
+                    title = currentBook.optString(WEB_TITLE);
+                }
 
-                // Extract the value for the key called "webUrl"
-                String url = currentBook.optString(WEB_URL);
+                String url = NOT_AVAILABLE;
+                if (currentBook.has(WEB_PUBLICATION_DATE)) {
+                    // Extract the value for the key called "webUrl"
+                    url = currentBook.optString(WEB_URL);
+                }
 
                 // Extract the JSONArray associated with the key called "tags"
                 String authorName = NOT_AVAILABLE;
@@ -195,7 +210,7 @@ public final class QueryUtils {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the book JSON results", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.error_parsing_json_results), e);
         }
         // Return the list of books
         return books;

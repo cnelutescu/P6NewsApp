@@ -37,18 +37,20 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
     private static final int BOOK_LOADER_ID = 1;
 
     /**
-     * URL for Book data from the Guardian dataset
+     * Constant values to form URL to retrieve data from the Guardian data set
      */
-    private static final String THEGUARDIAN_REQUEST_URL =
-            "http://content.guardianapis.com/search?";   // +
-/*
-                    "section=books" +
-                    "&order-by=newest" +
-                    "&show-tags=contributor" +
-                    "&show-fields=all" +
-                    "&page-size=30" +
-                    "&api-key=5b253f61-670e-44c9-9cab-8fe015dbbfc0";
-*/
+    private static final String THEGUARDIAN_REQUEST_URL = "http://content.guardianapis.com/search?";
+    private static final String SECTION = "section";
+    private static final String ORDER_BY = "order-by";
+    private static final String NEWEST = "newest";
+    private static final String SHOW_TAGS = "show-tags";
+    private static final String CONTRIBUTOR = "contributor";
+    private static final String SHOW_FIELDS = "show-fields";
+    private static final String THUMBNAIL = "thumbnail";
+    private static final String PAGE_SIZE = "page-size";
+    private static final String API_KEY = "api-key";
+    private static final String KEY = "5b253f61-670e-44c9-9cab-8fe015dbbfc0";
+
     /**
      * Adapter for the list of books
      */
@@ -123,7 +125,6 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
         }
     }
 
-
     /**
      * If LoaderManager has determined that the loader with our specified ID isn't running
      * will create a new one with onCreateLoader()
@@ -139,15 +140,20 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
         // Read preferences from storage
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // getString retrieves a String value from the preferences.
+        // GetString retrieves a String value from the preferences.
         // The second parameter is the default value for this preference.
-        String minPageSize = sharedPrefs.getString(
-                getString(R.string.settings_min_page_size_key),
-                getString(R.string.settings_min_page_size_default));
+        String pageSize = sharedPrefs.getString(
+                getString(R.string.settings_page_size_key),
+                getString(R.string.settings_page_size_default));
+        // limit
+        int intValue = Integer.parseInt(pageSize);
+        if (intValue > 50) {
+            pageSize = "50";
+        }
 
-        String orderBy  = sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default)
+        String section = sharedPrefs.getString(
+                getString(R.string.settings_section_key),
+                getString(R.string.settings_section_default)
         );
 
         // parse breaks apart the URI string that's passed into its parameter
@@ -156,14 +162,12 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
         // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        // Append query parameter and its value. For example, the `format=geojson`
-        uriBuilder.appendQueryParameter("section", "books");
-        uriBuilder.appendQueryParameter("order-by", orderBy);
-//        uriBuilder.appendQueryParameter("order-by", "newest");
-        uriBuilder.appendQueryParameter("show-tags", "contributor");
-        uriBuilder.appendQueryParameter("show-fields", "all");
-        uriBuilder.appendQueryParameter("page-size", minPageSize);
-        uriBuilder.appendQueryParameter("api-key", "5b253f61-670e-44c9-9cab-8fe015dbbfc0");
+        uriBuilder.appendQueryParameter(SECTION, section);
+        uriBuilder.appendQueryParameter(ORDER_BY, NEWEST);
+        uriBuilder.appendQueryParameter(SHOW_TAGS, CONTRIBUTOR);
+        uriBuilder.appendQueryParameter(SHOW_FIELDS, THUMBNAIL);
+        uriBuilder.appendQueryParameter(PAGE_SIZE, pageSize);
+        uriBuilder.appendQueryParameter(API_KEY, KEY);
 
         // Return the completed uri
         // Create a new loader for the given URL
@@ -212,7 +216,6 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
     }
 
 
-
     @Override
     // This method initialize the contents of the Activity's options menu.
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -234,8 +237,5 @@ public class BookNewsActivity extends AppCompatActivity implements LoaderManager
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 }
